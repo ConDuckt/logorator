@@ -1,9 +1,15 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
-const Circle = require("./lib/shapes");
+const { Circle, Triangle, Square } = require("./lib/shapes");
 
 const collectUserInput = async () => {
   const userInput = await inquirer.prompt([
+    {
+      type: "list",
+      name: "shape",
+      message: "Choose a shape for your logo:",
+      choices: ["Circle", "Triangle", "Square"],
+    },
     {
       type: "input",
       name: "color",
@@ -26,12 +32,29 @@ const collectUserInput = async () => {
 
 const main = async () => {
   const userInput = await collectUserInput();
-  const circle = new Circle();
-  circle.setColor(userInput.color);
-  circle.setText(userInput.text);
-  circle.setTextColor(userInput.textColor);
+  
+  let shape;
 
-  const svgString = circle.render();
+  switch (userInput.shape) {
+    case "Circle":
+        shape = new Circle();
+        break;
+    case "Triangle":
+        shape = new Triangle();
+        break;
+    case "Square":
+        shape = new Square();
+        break;
+    default:
+        console.log("Invalid shape input.");
+        return;
+    };
+
+  shape.setColor(userInput.color);
+  shape.setText(userInput.text);
+  shape.setTextColor(userInput.textColor);
+
+  const svgString = shape.render();
   const filename = "logo.svg";
   const filePath = `./examples/${filename}`;
 
